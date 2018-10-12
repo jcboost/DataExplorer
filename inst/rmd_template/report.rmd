@@ -35,6 +35,7 @@ opts_chunk$set(fig.width = 14, fig.height = 10, echo = FALSE, results = "asis")
 <script src="d3.min.js"></script>
 
 ```{r basic_statistics}
+tryCatch({
 if ("introduce" %in% names(report_config)) {
   intro <- do_call("introduce")
   memory_usage <- intro[["memory_usage"]]
@@ -59,9 +60,11 @@ if ("introduce" %in% names(report_config)) {
   cat("### Basic Statistics", fill = TRUE)
   kable(intro_df)
 }
+},error = function(err) print(err) )
 ```
 
 ```{r data_structure}
+tryCatch({
 if ("plot_str" %in% names(report_config)) {
   str_object <- do.call(plot_str, c(list("data" = data, "max_level" = report_config[["plot_str"]][["max_level"]], "print_network" = FALSE)))
   plot_option <- report_config[["plot_str"]][setdiff(names(report_config[["plot_str"]]), c("type", "max_level", "print_network"))]
@@ -73,40 +76,50 @@ if ("plot_str" %in% names(report_config)) {
     do.call(diagonalNetwork, c(list("List" = str_object), plot_option))
   }
 }
+}, error = function(err) return(err) )
 ```
 
 ```{r missing_profile}
+tryCatch({
 if ("plot_missing" %in% names(report_config)) {
   cat("### Missing Data Profile", fill = TRUE)
   do_call("plot_missing")
 }
+}, error = function(err) return(err) )
 ```
 
 ```{r univariate_distribution_header}
+tryCatch({
 if (any(c("plot_bar", "plot_histogram", "plot_density") %in% names(report_config))) {
   cat("### Univariate Distribution", fill = TRUE)
 }
+}, error = function(err) return(err) )
 ```
 
 ```{r plot_histogram}
+tryCatch({
 if ("plot_histogram" %in% names(report_config)) {
   if (intro[["continuous_columns"]] > 0) {
     cat("#### Histogram", fill = TRUE)
     do_call("plot_histogram")
   }
 }
+}, error = function(err) return(err) )
 ```
 
 ```{r plot_density}
+tryCatch({
 if ("plot_density" %in% names(report_config)) {
   if (intro[["continuous_columns"]] > 0) {
     cat("#### Density Estimates", fill = TRUE)
     do_call("plot_density")
   }
 }
+}, error = function(err) return(err) )
 ```
 
 ```{r plot_frequency_bar}
+tryCatch({
 if ("plot_bar" %in% names(report_config)) {
   if (intro[["discrete_columns"]] > 0) {
     bar_option <- report_config[["plot_bar"]][setdiff(names(report_config[["plot_bar"]]), "with")]
@@ -114,9 +127,11 @@ if ("plot_bar" %in% names(report_config)) {
     do.call(plot_bar, c(list("data" = data), bar_option))
   }
 }
+}, error = function(err) return(err) )
 ```
 
 ```{r plot_response_bar}
+tryCatch({
 if ("plot_bar" %in% names(report_config)) {
   if (intro[["discrete_columns"]] > 0) {
     if (!is.null(response)) {
@@ -127,9 +142,11 @@ if ("plot_bar" %in% names(report_config)) {
     }
   }
 }
+}, error = function(err) return(err) )
 ```
 
 ```{r plot_with_bar}
+tryCatch({
 if ("plot_bar" %in% names(report_config)) {
   if (intro[["discrete_columns"]] > 0) {
     with_value <- report_config[["plot_bar"]][["with"]]
@@ -141,16 +158,20 @@ if ("plot_bar" %in% names(report_config)) {
     }
   }
 }
+}, error = function(err) return(err) )
 ```
 
 ```{r correlation_analysis}
+tryCatch({
 if ("plot_correlation" %in% names(report_config)) {
   cat("### Correlation Analysis", fill = TRUE)
   do_call("plot_correlation", na_omit = TRUE)
 }
+}, error = function(err) return(err) )
 ```
 
 ```{r principle_component_analysis}
+tryCatch({
 if ("plot_prcomp" %in% names(report_config)) {
   cat("### Principle Component Analysis", fill = TRUE)
   if (!is.null(response)) {
@@ -160,15 +181,19 @@ if ("plot_prcomp" %in% names(report_config)) {
     do_call("plot_prcomp", na_omit = TRUE)
   }
 }
+},error = function(err) print(err) )
 ```
 
 ```{r bivariate_distribution_header}
+tryCatch({
 if (any(c("plot_boxplot", "plot_scatterplot") %in% names(report_config)) & !is.null(response)) {
   cat("### Bivariate Distribution", fill = TRUE)
 }
+},error = function(err) print(err) )
 ```
 
 ```{r plot_response_boxplot}
+tryCatch({
 if ("plot_boxplot" %in% names(report_config)) {
   boxplot_option <- report_config[["plot_boxplot"]][setdiff(names(report_config[["plot_boxplot"]]), "by")]
   if (!is.null(response)) {
@@ -176,9 +201,11 @@ if ("plot_boxplot" %in% names(report_config)) {
     do.call(plot_boxplot, c(list("data" = data, "by" = response), boxplot_option))
   }
 }
+},error = function(err) print(err) )
 ```
 
 ```{r plot_by_boxplot}
+tryCatch({
 if ("plot_boxplot" %in% names(report_config)) {
   by_value <- report_config[["plot_boxplot"]][["by"]]
   if (!is.null(by_value)) {
@@ -188,9 +215,11 @@ if ("plot_boxplot" %in% names(report_config)) {
     }
   }
 }
+},error = function(err) print(err) )
 ```
 
 ```{r plot_response_scatterplot}
+tryCatch({
 if ("plot_scatterplot" %in% names(report_config)) {
   scatterplot_option <- report_config[["plot_scatterplot"]][setdiff(names(report_config[["plot_scatterplot"]]), "by")]
   if (!is.null(response)) {
@@ -198,9 +227,11 @@ if ("plot_scatterplot" %in% names(report_config)) {
     do.call(plot_scatterplot, c(list("data" = data, "by" = response), scatterplot_option))
   }
 }
+},error = function(err) print(err) )
 ```
 
 ```{r plot_by_scatterplot}
+tryCatch({
 if ("plot_scatterplot" %in% names(report_config)) {
   by_value <- report_config[["plot_scatterplot"]][["by"]]
   if (!is.null(by_value)) {
@@ -210,4 +241,5 @@ if ("plot_scatterplot" %in% names(report_config)) {
     }
   }
 }
+},error = function(err) print(err) )
 ```
